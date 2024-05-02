@@ -1,0 +1,21 @@
+import sys
+from os import system as run
+
+link = sys.argv[1]
+name = sys.argv[2]
+vi_tri_luu = sys.argv[3]
+
+if name == "":
+    print("ERROR - You haven't specified file name")
+    sys.exit(0)
+
+def onedown(link, name, vi_tri_luu):
+    if vi_tri_luu == "Google Drive":
+        run(f'wget -O "$name" -P /content/drive/MyDrive $link')
+    else:
+        run(f'wget -O "$name" $link')
+
+x = link.split("?")
+link = x[0] + "?download=1"
+
+onedown(link, name, vi_tri_luu)
