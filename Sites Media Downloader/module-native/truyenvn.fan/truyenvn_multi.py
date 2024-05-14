@@ -4,6 +4,7 @@ from os.path import join
 from os import makedirs
 import sys
 
+'''
 web = sys.argv[1]
 place = sys.argv[2]
 from_chapter = sys.argv[3]
@@ -12,6 +13,7 @@ to_chapter = sys.argv[4]
 to_chapter = int(to_chapter)
 special_chapter_suffixes = sys.argv[5]
 special_chapter_suffixes = special_chapter_suffixes.split()
+'''
 
 def onechapter(web, output_dir):
     res = requests.get(web)
@@ -47,18 +49,37 @@ def onechapter(web, output_dir):
     '''
 
 def multichapters(link, dir, from_chapter, latest_chapter, *special_chapters):
+    print("Generating Chapters List Links...")
     listchaps = []
     for c in range(from_chapter,latest_chapter+1):
         chapterlink = f'{link}chapter-{c}'
-        listchaps.append(chapterlink)
-        if special_chapters != 0:
+        lnktest = f'{chapterlink}/001.jpg'
+        print(f"Testing: {lnktest}")
+        chlnktest = requests.get(lnktest)
+        #if chlnktest.status_code != 404:
+        if chlnktest.ok:
+            print("OK!")
+            listchaps.append(chapterlink)
+        else:
+            print("Not Available.")
+        a = []
+        if special_chapters != a:
             for x in special_chapters:
-                c = c + x
-                specialchapterlink = f'{link}chapter-{c}'
-                c = c - x
-                listchaps.append(specialchapterlink)
+                #c = c + x
+                specialchapterlink = f'{link}chapter-{c}-{x}'
+                test = f'{specialchapterlink}/001.jpg'
+                print(f"Testing: {test}")
+                resp = requests.get(test)
+                #if resp.status_code != 404:
+                if resp.ok:
+                    print("OK!")
+                #c = c - x
+                    listchaps.append(specialchapterlink)
+                else:
+                    print("Not Available.")
     for x in listchaps:
         onechapter(x, dir)
 
-multichapters(web,place,from_chapter,to_chapter,special_chapter_suffixes)
+#multichapters(web,place,from_chapter,to_chapter,special_chapter_suffixes)
 
+multichapters("https://truyenvn.lol/truyen-tranh/dong-ho-ngung-dong-thoi-gian/","\downloads",2,90,0)
