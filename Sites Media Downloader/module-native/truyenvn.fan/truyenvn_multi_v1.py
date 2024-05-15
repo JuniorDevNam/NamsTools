@@ -29,9 +29,9 @@ def onechapter(web, output_dir):
     makedirs(folder, exist_ok=True)
     for x in range(1,len(img_tags)+1):
         if 1 <= x <= 9:
-            downlink = f'https://img.imgxyzz.xyz/{parts[4]}/{parts[5]}/00{x}.jpg'
+            downlink = f'https://img.imgxyzz.xyz/{parts[-2]}/{parts[-1]}/00{x}.jpg'
         elif x > 9:
-            downlink = f'https://img.imgxyzz.xyz/{parts[4]}/{parts[5]}/0{x}.jpg'
+            downlink = f'https://img.imgxyzz.xyz/{parts[-2]}/{parts[-1]}/0{x}.jpg'
         print(downlink)
         image_save_path = join(folder, f'0{x}.jpg')
         res = requests.get(downlink)
@@ -53,23 +53,29 @@ def onechapter(web, output_dir):
 def multichapters(link, dir, from_chapter, latest_chapter, *special_chapters):
     print("Generating Chapters List Links...")
     listchaps = []
+    error = 0
     for c in range(from_chapter,latest_chapter+1):
         chapterlink = f'{link}chapter-{c}'
-        lnktest = f'{chapterlink}/001.jpg'
+        parts1 = chapterlink.split("/")
+        lnktest = f'https://img.imgxyzz.xyz/{parts1[-2]}/{parts1[-1]}/001.jpg'
         print(f"Testing: {lnktest}")
         chlnktest = requests.get(lnktest)
         #if chlnktest.status_code != 404:
         if chlnktest.ok:
             print("OK!")
             listchaps.append(chapterlink)
+            if error == 1:
+                error -= 1
         else:
             print("Not Available.")
+            error += 1
         a = []
         if special_chapters != a:
             for x in special_chapters:
                 #c = c + x
                 specialchapterlink = f'{link}chapter-{c}-{x}'
-                test = f'{specialchapterlink}/001.jpg'
+                parts2 = specialchapterlink.split("/")
+                test = f'https://img.imgxyzz.xyz/{parts2[-2]}/{parts2[-1]}/001.jpg'
                 print(f"Testing: {test}")
                 resp = requests.get(test)
                 #if resp.status_code != 404:
@@ -77,8 +83,15 @@ def multichapters(link, dir, from_chapter, latest_chapter, *special_chapters):
                     print("OK!")
                 #c = c - x
                     listchaps.append(specialchapterlink)
+                    if error == 1:
+                        error -= 1
                 else:
                     print("Not Available.")
+                    error += 1
+        if error == 2:
+            print("Found 2 chapters Not Availible continously. Exiting Chapters Link Lists Generation to avoid time consuming.")
+            print("Now Downloading...")
+            break
     for x in listchaps:
         onechapter(x, dir)
 
