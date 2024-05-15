@@ -4,6 +4,21 @@ import requests
 from selenium.webdriver.common.by import By
 import random
 
+'''
+import requests
+import urllib
+from bs4 import BeautifulSoup
+from os.path import join
+from os import makedirs
+import time
+from selenium import webdriver
+from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+'''
+options = webdriver.ChromeOptions()
+options.add_argument('--headless')
 # Initialize the WebDriver (make sure you have ChromeDriver installed)
 driver = webdriver.Chrome()
 
