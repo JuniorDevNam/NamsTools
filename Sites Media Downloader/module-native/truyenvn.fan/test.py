@@ -1,3 +1,3 @@
 import requests
 web = input()
-print(requests.get(web))
+print(web.split("/"))

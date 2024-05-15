@@ -15,71 +15,57 @@ special_chapter_suffixes = sys.argv[5]
 special_chapter_suffixes = special_chapter_suffixes.split()
 '''
 
+#Update 15/5/24 để phù hợp với đổi mới của mã nguồn trang web
+
 def onechapter(web, output_dir):
     res = requests.get(web)
     html_content = res.text
     soup = BeautifulSoup(html_content, 'html.parser')
-    img_tags = soup.find_all('img')
-    #print(img_tags)
+    c = 0
+    img_urls = []
+    while True:
+        specific_id = f'image-{c}'
+        img_tag = soup.find('img', id=specific_id)
+        if img_tag:
+            img_url = img_tag['data-src']
+            print(img_url)
+            img_urls.append(img_url)
+            c += 1
+        else:
+            print("Not Found Image URL with image ID",specific_id)
+            break
+    if img_urls == []:
+        return "Link Not Available"
     parts = web.split("/")
     print(parts[4],parts[5])
     folder = f'{output_dir}\{parts[4]}\{parts[5]}'
     makedirs(folder, exist_ok=True)
-    for x in range(1,len(img_tags)+1):
-        if 1 <= x <= 9:
-            downlink = f'https://img.imgxyzz.xyz/{parts[4]}/{parts[5]}/00{x}.jpg'
-        elif x > 9:
-            downlink = f'https://img.imgxyzz.xyz/{parts[4]}/{parts[5]}/0{x}.jpg'
-        print(downlink)
-        image_save_path = join(folder, f'0{x}.jpg')
-        res = requests.get(downlink)
+    for x in img_urls:
+        n = x.split("/")[-1]
+        image_save_path = join(folder, n)
+        print(image_save_path)
+        res = requests.get(x)
         with open(image_save_path, 'wb') as f:
             f.write(res.content)
-    '''
-    res = requests.get(web)
-    html_content = res.text
-    soup = BeautifulSoup(html_content, 'html.parser')
-    img_tags = soup.find_all('img')
-    image_links = [img['data-src'] for img in img_tags]
-    for i, link in enumerate(image_links):
-        image_save_path = join(output_dir, f'image_{i}.jpg')
-        res = requests.get(link)
-        with open(image_save_path, 'wb') as f:
-            f.write(res.content)
-    '''
+
 
 def multichapters(link, dir, from_chapter, latest_chapter, *special_chapters):
-    print("Generating Chapters List Links...")
-    listchaps = []
+    a = []
+    chapsuffix = link.split("/")[-2]
+    print(chapsuffix)
     for c in range(from_chapter,latest_chapter+1):
-        chapterlink = f'{link}chapter-{c}'
-        lnktest = f'{chapterlink}/001.jpg'
-        print(f"Testing: {lnktest}")
-        chlnktest = requests.get(lnktest)
-        #if chlnktest.status_code != 404:
-        if chlnktest.ok:
-            print("OK!")
-            listchaps.append(chapterlink)
-        else:
-            print("Not Available.")
-        a = []
+        chapterlink = f'{link}{chapsuffix}-chapter-{c}'
+        print(chapterlink)
+        onechapter(chapterlink,dir)
         if special_chapters != a:
             for x in special_chapters:
-                #c = c + x
-                specialchapterlink = f'{link}chapter-{c}-{x}'
-                test = f'{specialchapterlink}/001.jpg'
-                print(f"Testing: {test}")
-                resp = requests.get(test)
-                #if resp.status_code != 404:
-                if resp.ok:
-                    print("OK!")
-                #c = c - x
-                    listchaps.append(specialchapterlink)
-                else:
-                    print("Not Available.")
-    for x in listchaps:
-        onechapter(x, dir)
+                specialchapterlink = f'{link}{chapsuffix}-chapter-{c}-{x}'
+                print(specialchapterlink)
+                onechapter(specialchapterlink,dir)
+        
 
 #multichapters(web,place,from_chapter,to_chapter,special_chapter_suffixes)
 
-multichapters("https://truyenvn.lol/truyen-tranh/dong-ho-ngung-dong-thoi-gian/","\downloads",2,90,0)
+multichapters("https://truyenvn.lol/truyen-tranh/dong-ho-ngung-dong-thoi-gian/","\downloads",26,46,0)
+
+#multichapters("https://truyenvn.lol/truyen-tranh/phan-boi-loai-nguoi-de-chich-gai/","\downloads",1,42)
