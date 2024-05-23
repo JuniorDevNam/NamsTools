@@ -32,8 +32,9 @@ def onechapter(web, headers, output_dir):
     #debug
     #print(img_links)
     #parts = web.split("/")
-    title_tag = soup.find('title')
-    title = title_tag.string.replace(":"," -")
+    #title_tag = soup.find('title')
+    #title = title_tag.string.replace(":"," -")
+    title = web.split("/")[-1]
     if output_dir == '':
         folder = join(sys.path[0],"downloads",title)
     else:
@@ -65,9 +66,11 @@ def allchapters(web, headers, domain):
             links.append(link.get("href"))
     links.pop(1)
     #print(links)
-    title_tag = soup.find("title")
-    print(title_tag.string)
-    output_dir = join(sys.path[0],"downloads",title_tag.string)
+    #title_tag = soup.find("title")
+    #title = title_tag.string
+    title = web.split("/")[-1]
+    print(title)
+    output_dir = join(sys.path[0],"downloads",title)
     for link in links:
         chap = f'{domain}{link}'
         print(chap)
