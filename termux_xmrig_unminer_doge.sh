@@ -1,4 +1,4 @@
-pkg install git tsu build-essential cmake -y
+pkg install git tsu tsudo build-essential cmake -y
 git clone https://github.com/xmrig/xmrig.git
 mkdir xmrig/build
 cd xmrig/build
