@@ -52,7 +52,15 @@ def onechapter(web, headers, output_dir):
  
 
 def allchapters(web, headers, domain):
-    res = requests.get(web,headers=headers)
+    while True:
+        try:
+            res = requests.get(web,headers=headers)
+            break
+        except requests.exceptions.SSLError:
+            try:
+                res = requests.get(f'https://webcache.googleusercontent.com/search?q=cache:{web}',headers=headers)
+            except requests.exceptions.SSLError:
+                print("Giải mã trang web bị lỗi. Đang cố gắng thử lại...")
     html_content = res.text
     soup = BeautifulSoup(html_content, 'html.parser')
     #debug
