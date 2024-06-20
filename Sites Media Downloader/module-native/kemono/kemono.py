@@ -4,7 +4,7 @@ from os.path import join, exists
 from pathlib import Path
 from os import makedirs
 import sys
-import urllib
+from urllib.parse import unquote
 #https://stackoverflow.com/questions/14587728/what-does-this-error-in-beautiful-soup-means
 
 web = sys.argv[1]
@@ -36,6 +36,7 @@ def kemono(url):
                 l = link.split('/')
                 print(l)
                 file = l[-1].split('?f=')[-1]
+                file = unquote(file)
                 print(file)
                 output_dir = join(down_dir,file)
                 with open(output_dir, 'wb') as out_file:

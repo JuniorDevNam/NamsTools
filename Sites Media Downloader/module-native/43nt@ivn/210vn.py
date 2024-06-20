@@ -72,6 +72,7 @@ def allchapters(web, headers, domain):
     for item in soup.find_all("div", class_=lambda x: x and 'watch-online' in x):
         for link in item.find_all("a"):
             links.append(link.get("href"))
+    print(links)
     links.pop(1)
     #print(links)
     #title_tag = soup.find("title")
