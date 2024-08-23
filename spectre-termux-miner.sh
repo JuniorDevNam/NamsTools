@@ -1,7 +1,6 @@
 #!/bin/bash
 #apt update
 #apt upgrade
-pkg install git build-essential cmake clang openssl udns fmt libc++ lld -y
 git clone https://github.com/Tritonn204/tnn-miner.git
 cd tnn-miner
 mkdir build
