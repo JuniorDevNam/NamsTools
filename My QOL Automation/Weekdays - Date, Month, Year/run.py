@@ -1,33 +1,45 @@
-import datetime
 import calendar
+import sys
+from os.path import join
+output = join(sys.path[0],'output.txt')
+def get_days_for_weekdays(year, month, weekday1, weekday2):
+    # Tạo một lịch tháng
+    cal = calendar.Calendar()
+    days = []
+    days2 = ["T2", "T3", "T4", "T5", "T6", "T7", "CN"]
+    
+    # Duyệt qua các ngày trong tháng
+    for day in cal.itermonthdays2(year, month):
+        if day[0] != 0:  # Loại bỏ các ngày không thuộc tháng hiện tại
+            if day[1] == weekday1 or day[1] == weekday2:
+                days.append(f"{day[0]:02d}/{month:02d}/{year} ({days2[day[1]]})")
+    
+    return days
 
-def get_weekdays(year, month, weekday):
-    # Tạo một danh sách các ngày trong tháng
-    days_in_month = calendar.monthrange(year, month)[1]
-    dates = [datetime.date(year, month, day) for day in range(1, days_in_month + 1)]
-    
-    # Lọc ra các ngày là thứ mà người dùng yêu cầu
-    weekdays = [date for date in dates if date.weekday() == weekday]
-    return weekdays
+# Nhập năm và tháng từ người dùng
+year = int(input("Nhập năm: "))
+month = int(input("Nhập tháng: "))
+   
+# Nhập thứ trong tuần từ người dùng (0: Thứ 2, 1: Thứ 3, ..., 6: Chủ nhật)
+days = ["Thứ 2", "Thứ 3", "Thứ 4", "Thứ 5", "Thứ 6", "Thứ 7", "Chủ Nhật"]
 
-def main():
-    # Nhập năm và tháng từ người dùng
-    year = int(input("Nhập năm: "))
-    month = int(input("Nhập tháng: "))
-    
-    # Nhập thứ trong tuần từ người dùng (0: Thứ 2, 1: Thứ 3, ..., 6: Chủ nhật)
-    days = ["Thứ 2","Thứ 3","Thứ 4","Thứ 5","Thứ 6","Thứ 7","Chủ Nhật"]
-    for i in range(7):
-        print("{}. {}".format(i,days[i]))
-    weekday = int(input("Nhập thứ trong tuần (0: Thứ 2, 1: Thứ 3, ..., 6: Chủ nhật): "))
-    
-    # Lấy các ngày là thứ mà người dùng yêu cầu
-    weekdays = get_weekdays(year, month, weekday)
-    
-    # In ra các ngày đó theo định dạng ngày/tháng/năm
-    print(f"Các ngày là thứ {calendar.day_name[weekday]} trong tháng {month}/{year}:")
-    for date in weekdays:
-        print(date.strftime("%d/%m/%Y"))
+for i in range(7):
+    print("{}. {}".format(i+2, days[i]))
+day = int(input("Nhập thứ trong tuần (2: Thứ 2, 3: Thứ 3, ..., 8: Chủ nhật): "))
+them = input("Xác nhận thứ? (0: OK, 1: Thêm thứ): ")
+if them == "1":
+    day2 = int(input("Nhập thứ trong tuần (2: Thứ 2, 3: Thứ 3, ..., 8: Chủ nhật): "))
+    weekday2 = day2-2
+else:
+    weekday2 = -1
+weekday1 = day-2
 
-if __name__ == "__main__":
-    main()
+weekdays = get_days_for_weekdays(year, month, weekday1, weekday2)
+print(f"Các ngày trong tháng {month}/{year} là thứ {days[weekday1]} hoặc thứ {days[weekday2]}: ")
+# Mở tệp ở chế độ ghi để xóa nội dung
+with open(output, 'w') as file:
+    pass
+with open(output, 'a', encoding="utf-8") as o:
+    for x in weekdays:
+        o.write(x + "\n")
+    o.write(f"Tổng 0{len(weekdays)} buổi\n")
