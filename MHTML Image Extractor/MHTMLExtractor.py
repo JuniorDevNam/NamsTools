@@ -346,7 +346,7 @@ class MHTMLExtractor:
         except Exception as e:
             logging.error(f"Error during extraction: {e}")
 
-
+'''
 if __name__ == "__main__":
     # Argument parsing setup
     parser = argparse.ArgumentParser(description="Extract files from MHTML documents.")
@@ -363,10 +363,12 @@ if __name__ == "__main__":
 
     # Example usage with command-line arguments
     extractor = MHTMLExtractor(
-        mhtml_path=args.mhtml_path,
-        output_dir=args.output_dir,
-        buffer_size=args.buffer_size,
-        clear_output_dir=args.clear_output_dir,
+       mhtml_path=args.mhtml_path,
+       output_dir=args.output_dir,
+       buffer_size=args.buffer_size,
+       clear_output_dir=args.clear_output_dir,
     )
 
     extractor.extract(args.no_css, args.no_images, args.html_only)
+
+'''
