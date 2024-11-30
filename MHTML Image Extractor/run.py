@@ -1,7 +1,26 @@
 from os.path import join
 from os import makedirs
 from sys import path
+import chardet
+
+#Original source code, many thanks:
 #https://github.com/AScriver/MHTMLExtractor
+
+import quopri
+def is_quoted_printable(file_path):
+    try:
+        with open(file_path, 'r') as file:
+            content = file.read()
+            decoded_content = quopri.decodestring(content)
+            return True
+    except Exception as e:
+        print(f"Error: {e}")
+        return False
+
+import binascii
+def binary_to_quoted_printable(binary_data):
+    return binascii.b2a_qp(binary_data).decode('utf-8')
+
 
 import os
 import re
@@ -13,7 +32,7 @@ from urllib.parse import urlparse, unquote
 import hashlib
 import shutil
 import logging
-import argparse
+#import argparse
 
 # Set up logging
 logging.basicConfig(
@@ -46,7 +65,7 @@ class MHTMLExtractor:
             output_dir (str): Output directory for the extracted files.
             buffer_size (int, optional): Buffer size for reading the MHTML file. Defaults to 8192.
             clear_output_dir (bool, optional): If True, clears the output directory before extraction. Defaults to False.
-        """
+                    """
         self.mhtml_path = mhtml_path
         self.output_dir = output_dir
         self.buffer_size = buffer_size
@@ -54,7 +73,7 @@ class MHTMLExtractor:
         self.extracted_count = 0
         self.url_mapping = {}  # Mapping between Content-Location and new filenames
         self.saved_html_files = []  # List to keep track of saved HTML filenames
-
+        
         self.ensure_directory_exists(self.output_dir, clear_output_dir)
 
     def ensure_directory_exists(self, directory_path, clear=False):
@@ -290,51 +309,98 @@ class MHTMLExtractor:
         with open(filepath, "w", encoding="utf-8") as html_file:
             html_file.write(content)
 
-    def extract(self, no_css=False, no_images=False, html_only=False):
-        """
-        Extract files from MHTML into separate files.
-        """
-        temp_buffer_chunks = []  # Use a list to store chunks and join them when needed
+    def extract(self, no_css=False, no_images=False, html_only=False, encoding='utf-8'):
+        
+        #Extract files from MHTML into separate files.
+        
+            temp_buffer_chunks = []  # Use a list to store chunks and join them when needed
+        
+        #try:
+            #Kiem tra ma hoa
+            if is_quoted_printable(self.mhtml_path):
+                    # Đọc file nhị phan
+                with open(self.mhtml_path, "r", encoding=encoding) as file:
+                    print(file)
+                    # Continuously read from the MHTML file until no more content is left
+                    while True:
+                        chunk = file.read(self.buffer_size)
+                        if not chunk:
+                            break
 
-        try:
-            with open(self.mhtml_path, "r", encoding="utf-8") as file:
-                # Continuously read from the MHTML file until no more content is left
-                while True:
-                    chunk = file.read(self.buffer_size)
-                    if not chunk:
-                        break
-
-                    """
-                    Python strings are immutable, This means that every time you concatenate two strings using 
-                    the '+' operator, a new string is created in memory, and the contents of the two original 
-                    strings are copied over to this new string. The time complexity of the following line is O(n^2)
+                        """
+                        Python strings are immutable, This means that every time you concatenate two strings using 
+                        the '+' operator, a new string is created in memory, and the contents of the two original 
+                        strings are copied over to this new string. The time complexity of the 
+                        following line is O(n^2)
                     
-                    temp_buffer_chunks += chunk
+                        temp_buffer_chunks += chunk
                     
-                    On the other hand, the list join method avoids this overhead by creating a single new string 
-                    and copying the content of each string in the list to the new string only once. This results 
-                    in a linear time complexity of O(n).
-                    """
-                    temp_buffer_chunks.append(chunk)
+                        On the other hand, the list join method avoids this overhead by creating a single new string 
+                        and copying the content of each string in the list to the new string only once.
+                        This results in a linear time complexity of O(n).
+                        """
+                        temp_buffer_chunks.append(chunk)
 
                     # If the boundary hasn't been determined yet, try to find it
-                    if not self.boundary:
-                        self.boundary = self._read_boundary("".join(temp_buffer_chunks))
+                        if not self.boundary:
+                            self.boundary = self._read_boundary("".join(temp_buffer_chunks))
 
                     # Split the buffer by the boundary to process each part
-                    parts = "".join(temp_buffer_chunks).split("--" + self.boundary)
+                        parts = "".join(temp_buffer_chunks).split("--" + self.boundary)
 
                     # Retain the last part in case it's incomplete
-                    temp_buffer_chunks = [parts[-1]]  # Retain the last part in case it's incomplete
+                        temp_buffer_chunks = [parts[-1]]  # Retain the last part in case it's incomplete
 
-                    for part in parts[:-1]:
-                        if self.extracted_count > 0:  # Skip the headers
-                            self._process_part(part, no_css, no_images, html_only)
+                        for part in parts[:-1]:
+                            if self.extracted_count > 0:  # Skip the headers
+                                self._process_part(part, no_css, no_images, html_only)
 
-                        self.extracted_count += 1
+                            self.extracted_count += 1
+            else:
+                with open(self.mhtml_path, 'rb') as data:
+                    binary_data = data.read()
+                # Chuyển đổi sang quoted-printable
+                quoted_printable_data = binary_to_quoted_printable(binary_data)
 
+                #debug
+                print(quoted_printable_data)
+                
+                #This is a temporary bugfix about when encoded to quoted-printable, somehow
+                # the boundary has some weird characters that the read boundary cannot run
+                quoted_printable_data = quoted_printable_data.replace("boundary=3D","boundary=")
+
+                #debug
+                print(quoted_printable_data)
+
+                # Chia nhỏ dữ liệu thành các phần nhỏ hơn
+                temp_buffer_chunks = []
+                buffer_size = self.buffer_size  # Đảm bảo buffer_size được định nghĩa
+
+                # Sử dụng slicing để chia nhỏ chuỗi
+                for i in range(0, len(quoted_printable_data), buffer_size):
+                    chunk = quoted_printable_data[i:i + buffer_size]
+                    temp_buffer_chunks.append(chunk)
+
+                # Nếu chưa xác định được boundary, thử tìm nó
+                if not self.boundary:
+                    self.boundary = self._read_boundary("".join(temp_buffer_chunks))
+                    if not self.boundary:
+                        raise ValueError("Boundary could not be determined.")
+
+                # Chia buffer theo boundary để xử lý từng phần
+                parts = "".join(temp_buffer_chunks).split("--" + self.boundary)
+
+                # Giữ lại phần cuối cùng trong trường hợp nó chưa hoàn chỉnh
+                temp_buffer_chunks = [parts[-1]]
+
+                for part in parts[:-1]:
+                    if self.extracted_count > 0:  # Bỏ qua các header
+                        self._process_part(part, no_css, no_images, html_only)
+
+                    self.extracted_count += 1
+            
             if html_only:
-                return
+                    return
 
             # After processing all parts, sort URLs by length (longest first)
             sorted_urls = sorted(self.url_mapping.keys(), key=len, reverse=True)
@@ -346,8 +412,8 @@ class MHTMLExtractor:
                 self._update_html_links(filepath, sorted_urls, hash_pattern)
 
             logging.info(f"Extracted {self.extracted_count-1} files into {self.output_dir}")
-        except Exception as e:
-            logging.error(f"Error during extraction: {e}")
+        #except Exception as e:
+            #logging.error(f"Error during extraction: {e}")
 
 '''
 if __name__ == "__main__":
@@ -376,15 +442,31 @@ if __name__ == "__main__":
 
 '''
 
-file = input("Enter MHTML File (File Must Be The Same Directory; Enter Name File With .mhtml Extension File Only): ")
-file_path = join(path[0], file)
-out_dir = file[:]
-if ".mhtml" in file:
-    out_dir = out_dir.replace(".mhtml", "")
-out_dir = out_dir.replace(" ", "_")
-print(file)
-dir = join(path[0], out_dir)
-makedirs(dir, exist_ok=True)
-print(out_dir)
+#----------------------------------------------------------------------------------------------#
 
-MHTMLExtractor(mhtml_path=file_path, output_dir=dir).extract()
+def list_files_recursively(directory):
+    file_list = []
+    for root, dirs, files in os.walk(directory):
+        for file in files:
+            file_list.append([join(root, file),file])
+    return file_list
+
+file_list = list_files_recursively(join(path[0], 'input_mhtml_files_here'))
+print(file_list)
+
+
+
+
+for file in file_list:
+    print("----------------------------------------")
+    print(file[0])
+    out_dir_name = file[1]
+    if ".mhtml" in out_dir_name:
+        out_dir_name = out_dir_name.replace(".mhtml", "")
+    out_dir_name = out_dir_name.replace(" ", "_")
+    print(out_dir_name)
+    dir = join(path[0], 'output', out_dir_name)
+    print(dir)
+    makedirs(dir, exist_ok=True)
+
+    MHTMLExtractor(mhtml_path=file[0], output_dir=dir, buffer_size=10240).extract()
