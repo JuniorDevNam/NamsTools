@@ -1,0 +1,1 @@
+<_io.TextIOWrapper name='c:\\Users\\Dell 7390\\Documents\\NamsTools\\MHTML Image Extractor\\input_mhtml_files_here\\input_directory.txt' mode='r' encoding='utf-8'>

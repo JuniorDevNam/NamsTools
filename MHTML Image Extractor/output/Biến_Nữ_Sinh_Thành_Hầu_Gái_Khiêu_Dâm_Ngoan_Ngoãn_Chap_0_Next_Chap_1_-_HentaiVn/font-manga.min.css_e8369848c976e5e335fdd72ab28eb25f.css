@@ -1,0 +1,115 @@
+@charset "utf-8";
+
+@font-face { font-family: icomanga; src: url("../fonts/icomanga.ttf?szr1fp") format("truetype"), url("../fonts/icomanga.woff?szr1fp") format("woff"); font-weight: 400; font-style: normal; font-display: block; }
+
+.fa { font-style: normal; font-weight: 400; font-variant: normal; text-transform: none; line-height: 1; -webkit-font-smoothing: antialiased; font-family: icomanga !important; }
+
+.fa-plus::before { content: ""; }
+
+.fa-search::before { content: ""; }
+
+.fa-heart::before { content: ""; }
+
+.fa-star::before { content: ""; }
+
+.fa-user::before { content: ""; }
+
+.fa-check::before { content: ""; }
+
+.fa-close::before, .fa-remove::before, .fa-times::before { content: ""; }
+
+.fa-signal::before { content: ""; }
+
+.fa-home::before { content: ""; }
+
+.fa-clock-o::before { content: ""; }
+
+.fa-refresh::before { content: ""; }
+
+.fa-lock::before { content: ""; }
+
+.fa-tags::before { content: ""; }
+
+.fa-book::before { content: ""; }
+
+.fa-list::before { content: ""; }
+
+.fa-edit::before, .fa-pencil-square-o::before { content: ""; }
+
+.fa-chevron-left::before { content: ""; }
+
+.fa-chevron-right::before { content: ""; }
+
+.fa-info-circle::before { content: ""; }
+
+.fa-fire::before { content: ""; }
+
+.fa-eye::before { content: ""; }
+
+.fa-exclamation-triangle::before, .fa-warning::before { content: ""; }
+
+.fa-comment::before { content: ""; }
+
+.fa-twitter-square::before { content: ""; }
+
+.fa-comments::before { content: ""; }
+
+.fa-thumbs-o-up::before { content: ""; }
+
+.fa-sign-out::before { content: ""; }
+
+.fa-linkedin-square::before { content: ""; }
+
+.fa-external-link::before { content: ""; }
+
+.fa-phone::before { content: ""; }
+
+.fa-facebook-f::before, .fa-facebook::before { content: ""; }
+
+.fa-feed::before, .fa-rss::before { content: ""; }
+
+.fa-bars::before, .fa-navicon::before, .fa-reorder::before { content: ""; }
+
+.fa-caret-down::before { content: ""; }
+
+.fa-caret-left::before { content: ""; }
+
+.fa-sort::before, .fa-unsorted::before { content: ""; }
+
+.fa-rotate-left::before, .fa-undo::before { content: ""; }
+
+.fa-dashboard::before, .fa-tachometer::before { content: ""; }
+
+.fa-comments-o::before { content: ""; }
+
+.fa-cloud-upload::before { content: ""; }
+
+.fa-file-text-o::before { content: ""; }
+
+.fa-angle-double-up::before { content: ""; }
+
+.fa-angle-left::before { content: ""; }
+
+.fa-angle-right::before { content: ""; }
+
+.fa-angle-up::before { content: ""; }
+
+.fa-angle-down::before { content: ""; }
+
+.fa-share-alt::before { content: ""; }
+
+.fa-mail-forward::before, .fa-share::before { content: ""; }
+
+.fa-filter::before { content: ""; }
+
+.fa-lightbulb-o::before { content: ""; }
+
+.fa-ellipsis-h::before { content: ""; }
+
+.fa-thumbs-up::before { content: ""; }
+
+.fa-thumbs-down::before { content: ""; }
+
+.fa-toggle-off::before { content: ""; }
+
+.fa-toggle-on::before { content: ""; }
