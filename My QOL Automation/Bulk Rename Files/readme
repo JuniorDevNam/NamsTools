@@ -1,3 +1,5 @@
 mỗi phiên bản phục vụ cho 1 tác vụ cố định phù hợp với nhu cầu của tôi
 
-v1: giữ nguyên cấu trúc tên file, chỉ thay thế ký tự tiếng Việt thành chữ latinh không dấu (có thể coi là tiếng Anh)
+v1: 
+- run: giữ nguyên cấu trúc tên file, chỉ thay thế ký tự tiếng Việt thành chữ latinh không dấu (có thể coi là tiếng Anh)
+- run1: sau khi chạy run, chương trình run1 sẽ xóa bỏ toàn bộ các cụm từ "Hộ chiếu" không dấu trong file
